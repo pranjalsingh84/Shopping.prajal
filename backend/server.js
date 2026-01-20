@@ -18,10 +18,17 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 /* =======================
-   🔥 CORS FIX (VERY IMPORTANT)
+   🔥 HARD CORS FIX
    ======================= */
-app.use(cors());
-app.options('*', cors());
+app.use(
+  cors({
+    origin: [
+      'http://localhost:3000',
+      'https://shopping-prajal-xh3u.vercel.app',   // <-- apna Vercel URL baad me yahan update karna
+    ],
+    credentials: true,
+  })
+);
 
 /* =======================
    BODY PARSER
@@ -46,7 +53,14 @@ app.get('/api/config/paypal', (req, res) =>
 );
 
 /* =======================
-   PRODUCTION FRONTEND SERVE (OPTIONAL)
+   TEST ROUTE (DEBUG)
+   ======================= */
+app.get('/api/test', (req, res) => {
+  res.json({ status: 'CORS working perfectly' });
+});
+
+/* =======================
+   PRODUCTION
    ======================= */
 if (process.env.NODE_ENV === 'production') {
   const __dirname = path.resolve();
@@ -67,13 +81,13 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 /* =======================
-   ERROR HANDLERS
+   ERRORS
    ======================= */
 app.use(notFound);
 app.use(errorHandler);
 
 /* =======================
-   START SERVER
+   START
    ======================= */
 app.listen(port, () =>
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${port}`)
