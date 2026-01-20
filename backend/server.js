@@ -15,11 +15,10 @@ connectDB();
 
 const app = express();
 
-// 🔥 CORS — SAB DOMAIN ALLOW (SAFE FOR DEMO PROJECT)
+// 🔥 SIMPLE & SAFE CORS (FOR DEPLOYED DEMO PROJECT)
 app.use(cors({
   origin: '*',
-  methods: ['GET','POST','PUT','DELETE'],
-  credentials: false
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 
 app.use(express.json());
@@ -33,11 +32,11 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/upload', uploadRoutes);
 
 // PAYPAL CONFIG
-app.get('/api/config/paypal', (req, res) =>
-  res.send({ clientId: process.env.PAYPAL_CLIENT_ID })
-);
+app.get('/api/config/paypal', (req, res) => {
+  res.send({ clientId: process.env.PAYPAL_CLIENT_ID });
+});
 
-// ROOT TEST
+// ROOT TEST ROUTE
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
