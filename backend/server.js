@@ -12,28 +12,19 @@ import uploadRoutes from './routes/uploadRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 dotenv.config();
-
-const port = process.env.PORT || 5000;
-
 connectDB();
 
 const app = express();
+const port = process.env.PORT || 5000;
 
 /* =======================
-   CORS FIX (VERY IMPORTANT)
+   🔥 CORS FIX (VERY IMPORTANT)
    ======================= */
-app.use(
-  cors({
-    origin: [
-      'http://localhost:3000',
-      'https://shopping-prajal-xh3u.vercel.app'
-    ],
-    credentials: true,
-  })
-);
+app.use(cors());
+app.options('*', cors());
 
 /* =======================
-   BODY PARSERS
+   BODY PARSER
    ======================= */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -47,12 +38,15 @@ app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/upload', uploadRoutes);
 
+/* =======================
+   PAYPAL CONFIG
+   ======================= */
 app.get('/api/config/paypal', (req, res) =>
   res.send({ clientId: process.env.PAYPAL_CLIENT_ID })
 );
 
 /* =======================
-   PRODUCTION STATIC FILES
+   PRODUCTION FRONTEND SERVE (OPTIONAL)
    ======================= */
 if (process.env.NODE_ENV === 'production') {
   const __dirname = path.resolve();
