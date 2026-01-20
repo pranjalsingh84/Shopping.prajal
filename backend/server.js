@@ -1,4 +1,3 @@
-import path from 'path';
 import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
@@ -16,44 +15,34 @@ connectDB();
 
 const app = express();
 
-// 🔥 CORS FIX — VERY IMPORTANT
+// 🔥 CORS — SAB DOMAIN ALLOW (SAFE FOR DEMO PROJECT)
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://shopping-prajal-xh3u.vercel.app'
-  ],
-  credentials: true
+  origin: '*',
+  methods: ['GET','POST','PUT','DELETE'],
+  credentials: false
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// ROUTES
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/upload', uploadRoutes);
 
+// PAYPAL CONFIG
 app.get('/api/config/paypal', (req, res) =>
   res.send({ clientId: process.env.PAYPAL_CLIENT_ID })
 );
 
-const __dirname = path.resolve();
+// ROOT TEST
+app.get('/', (req, res) => {
+  res.send('API is running...');
+});
 
-if (process.env.NODE_ENV === 'production') {
-  app.use('/uploads', express.static('/var/data/uploads'));
-  app.use(express.static(path.join(__dirname, '/frontend/build')));
-
-  app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
-  );
-} else {
-  app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
-  app.get('/', (req, res) => {
-    res.send('API is running....');
-  });
-}
-
+// ERROR HANDLERS
 app.use(notFound);
 app.use(errorHandler);
 
